@@ -28,7 +28,9 @@ spec:
   ignoreDifferences:
   - group: external-secrets.io
     kind: ExternalSecret
-    jsonPointers:
-    - /spec/dataFrom
-    - /metadata/annotations
-    - /metadata/finalizers
+    jqPathExpressions:
+    - .metadata.annotations
+    - .metadata.finalizers
+    - .spec.dataFrom
+    - .spec.target.template
+    - .status
