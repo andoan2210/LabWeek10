@@ -1,0 +1,15 @@
+# Test: Pod dùng hostNetwork -> phải bị REJECT
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-hostnetwork
+  namespace: demo
+spec:
+  hostNetwork: true
+  containers:
+  - name: nginx
+    image: nginx:1.25.0
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi

@@ -1,0 +1,14 @@
+# Test F-01: Pod dùng :latest tag -> phải bị REJECT
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-latest
+  namespace: demo
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi

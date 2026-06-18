@@ -1,0 +1,33 @@
+# Lab 1.3 - Custom ConstraintTemplate
+# Reject Deployment nếu replicas > 5
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8smaxreplicas
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sMaxReplicas
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            maxReplicas:
+              type: integer
+  targets:
+  - target: admission.k8s.gatekeeper.sh
+    rego: |
+      package k8smaxreplicas
+
+      violation[{"msg": msg}] {
+        input.review.object.kind == "Deployment"
+        replicas := input.review.object.spec.replicas
+        max := input.parameters.maxReplicas
+        replicas > max
+        msg := sprintf("Deployment '%v' has %v replicas, which exceeds the maximum allowed %v.", [
+          input.review.object.metadata.name,
+          replicas,
+          max
+        ])
+      }
