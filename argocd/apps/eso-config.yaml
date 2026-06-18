@@ -1,0 +1,25 @@
+# ArgoCD App: Sync SecretStore + ExternalSecret từ folder eso/
+# sync-wave "1" — sau khi ESO operator (wave 0) đã sẵn sàng
+# Tách App riêng để tránh lỗi "no matches for kind SecretStore" khi sync cùng lúc operator
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: eso-config
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/andoan2210/LabWeek10.git
+    path: eso
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - ServerSideApply=true
