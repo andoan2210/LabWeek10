@@ -1,0 +1,38 @@
+# Lab 1.1 - RBAC
+# alice: Role (chỉ trong namespace demo) - CRUD workload
+# bob: ClusterRole - xem + thao tác pod toàn cụm
+# carol: ClusterRole - chỉ đọc (get/list/watch) toàn cụm
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer
+  namespace: demo
+rules:
+- apiGroups: ["", "apps", "argoproj.io"]
+  resources: ["deployments", "pods", "services", "replicasets", "rollouts"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: sre
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log", "pods/exec"]
+  verbs: ["get", "list", "watch", "create", "delete"]
+- apiGroups: [""]
+  resources: ["nodes", "namespaces", "services", "endpoints"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: viewer
+rules:
+- apiGroups: ["", "apps", "argoproj.io"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
