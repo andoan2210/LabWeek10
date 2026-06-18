@@ -7,8 +7,6 @@ apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
   name: k8snolatestimage
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   crd:
     spec:
@@ -35,8 +33,6 @@ apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
   name: k8srequirelimits
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   crd:
     spec:
@@ -70,8 +66,6 @@ apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
   name: k8snoroot
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   crd:
     spec:
@@ -97,8 +91,6 @@ apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
   name: k8snohostnetwork
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   crd:
     spec:

@@ -1,16 +1,16 @@
-# ArgoCD App: Deploy Gatekeeper ConstraintTemplates + Constraints
+# ArgoCD App: Deploy Gatekeeper ConstraintTemplates (phải sync trước Constraints)
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: gatekeeper-constraints
+  name: gatekeeper-templates
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:
     repoURL: https://github.com/andoan2210/LabWeek10.git
-    path: gatekeeper/constraints
+    path: gatekeeper/templates
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc

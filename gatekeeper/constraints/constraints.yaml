@@ -1,5 +1,5 @@
 # Lab 1.2 - Gatekeeper Constraints
-# Dùng enforcementAction: warn trước để audit, sau khi xác nhận OK thì đổi sang deny
+# Chỉ chứa Constraints (ConstraintTemplates đã tách sang gatekeeper/templates/)
 
 ---
 # F-01: Cấm image tag :latest
@@ -7,8 +7,6 @@ apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sNoLatestImage
 metadata:
   name: no-latest-image
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
 spec:
   enforcementAction: deny
   match:
@@ -22,8 +20,6 @@ apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sRequireLimits
 metadata:
   name: require-resource-limits
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
 spec:
   enforcementAction: deny
   match:
@@ -37,8 +33,6 @@ apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sNoRoot
 metadata:
   name: no-root-user
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
 spec:
   enforcementAction: deny
   match:
@@ -52,8 +46,6 @@ apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sNoHostNetwork
 metadata:
   name: no-host-network
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
 spec:
   enforcementAction: deny
   match:
