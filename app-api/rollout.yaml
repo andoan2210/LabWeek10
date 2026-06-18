@@ -21,14 +21,14 @@ spec:
     spec:
       containers:
       - name: api
-        image: ghcr.io/andoan2210/w10-api:0.0.1
+        image: ghcr.io/andoan2210/w10-api:0.0.2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
           protocol: TCP
         env:
         - name: VERSION
-          value: "v0.0.1"
+          value: "v0.0.2"
         - name: ERROR_RATE
           value: "0"
         # Lab 2.1: DB_PASSWORD đọc từ K8s Secret được ESO sync từ AWS Secrets Manager
