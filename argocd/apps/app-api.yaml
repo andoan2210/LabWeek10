@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/andoan2210/temp.git
+    repoURL: https://github.com/andoan2210/LabWeek10.git
     path: app-api
     targetRevision: main
   destination:
