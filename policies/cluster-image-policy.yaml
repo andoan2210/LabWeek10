@@ -1,0 +1,18 @@
+# Lab 2.2 - ClusterImagePolicy
+# Sigstore Policy Controller enforce: chỉ cho phép image đã ký bằng cosign key
+# Áp dụng cho namespace có label: policy.sigstore.dev/include=true
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: require-cosign-signature
+spec:
+  images:
+  # Chỉ enforce image từ ghcr.io của repo này
+  - glob: "ghcr.io/andoan2210/**"
+  authorities:
+  - key:
+      data: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyplMnuVH6bEWT9Jr6ZCmTK/aq+gd
+        xG9I3/UfJLOr6szQGQGDHYOmPuSNw26u4qe6517JrVaR9v8o6Vxo0Y1u3A==
+        -----END PUBLIC KEY-----

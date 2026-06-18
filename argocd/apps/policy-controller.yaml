@@ -1,0 +1,44 @@
+# Lab 2.2 - ArgoCD App: Cài Sigstore Policy Controller qua Helm
+# sync-wave "0" — cài cùng lúc với infrastructure
+# Policy Controller enforce ClusterImagePolicy tại admission time
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: policy-controller
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    repoURL: https://sigstore.github.io/helm-charts
+    chart: policy-controller
+    targetRevision: 0.9.0
+    helm:
+      values: |
+        # Chỉ enforce namespace có label policy.sigstore.dev/include=true
+        # Tránh block system namespaces
+        policyController:
+          webhook:
+            namespaceSelector:
+              matchExpressions:
+              - key: policy.sigstore.dev/include
+                operator: In
+                values: ["true"]
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cosign-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true

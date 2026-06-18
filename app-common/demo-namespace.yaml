@@ -5,3 +5,6 @@ metadata:
   name: demo
   annotations:
     argocd.argoproj.io/sync-wave: "0"
+  labels:
+    # Lab 2.2: Policy Controller chỉ enforce namespace có label này
+    policy.sigstore.dev/include: "true"

@@ -1,0 +1,25 @@
+# Lab 2.2 - ArgoCD App: Sync ClusterImagePolicy từ folder policies/
+# sync-wave "1" — sau khi Policy Controller (wave 0) đã sẵn sàng
+# Tách App riêng để tránh lỗi "no matches for kind ClusterImagePolicy"
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: policies
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/andoan2210/LabWeek10.git
+    path: policies
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cosign-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - ServerSideApply=true
