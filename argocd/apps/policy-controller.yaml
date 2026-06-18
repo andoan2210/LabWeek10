@@ -18,20 +18,12 @@ spec:
       values: |
         # Chỉ enforce namespace có label policy.sigstore.dev/include=true
         # Tránh block system namespaces
-        policyController:
-          webhook:
-            namespaceSelector:
-              matchExpressions:
-              - key: policy.sigstore.dev/include
-                operator: In
-                values: ["true"]
-        resources:
-          limits:
-            cpu: 200m
-            memory: 256Mi
-          requests:
-            cpu: 100m
-            memory: 128Mi
+        webhook:
+          namespaceSelector:
+            matchExpressions:
+            - key: policy.sigstore.dev/include
+              operator: In
+              values: ["true"]
   destination:
     server: https://kubernetes.default.svc
     namespace: cosign-system
