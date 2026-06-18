@@ -1,0 +1,62 @@
+# Lab 1.2 - Gatekeeper Constraints
+# Dùng enforcementAction: warn trước để audit, sau khi xác nhận OK thì đổi sang deny
+
+---
+# F-01: Cấm image tag :latest
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sNoLatestImage
+metadata:
+  name: no-latest-image
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+    - apiGroups: [""]
+      kinds: ["Pod"]
+
+---
+# F-02: Bắt buộc có resources.limits
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequireLimits
+metadata:
+  name: require-resource-limits
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+    - apiGroups: [""]
+      kinds: ["Pod"]
+
+---
+# F-04: Cấm runAsUser: 0
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sNoRoot
+metadata:
+  name: no-root-user
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+    - apiGroups: [""]
+      kinds: ["Pod"]
+
+---
+# Cấm hostNetwork: true
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sNoHostNetwork
+metadata:
+  name: no-host-network
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+    - apiGroups: [""]
+      kinds: ["Pod"]

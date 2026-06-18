@@ -1,0 +1,114 @@
+# Lab 1.2 - Gatekeeper ConstraintTemplates
+# 4 template: no-latest-tag, require-resource-limits, no-root-user, no-host-network
+
+---
+# F-01: Cấm image tag :latest
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8snolatestimage
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sNoLatestImage
+  targets:
+  - target: admission.k8s.gatekeeper.sh
+    rego: |
+      package k8snolatestimage
+      violation[{"msg": msg}] {
+        container := input.review.object.spec.containers[_]
+        endswith(container.image, ":latest")
+        msg := sprintf("Container '%v' uses ':latest' tag. Pin to a specific version.", [container.name])
+      }
+      violation[{"msg": msg}] {
+        container := input.review.object.spec.containers[_]
+        not contains(container.image, ":")
+        msg := sprintf("Container '%v' has no image tag. Pin to a specific version.", [container.name])
+      }
+
+---
+# F-02: Bắt buộc có resources.limits
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequirelimits
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequireLimits
+  targets:
+  - target: admission.k8s.gatekeeper.sh
+    rego: |
+      package k8srequirelimits
+      violation[{"msg": msg}] {
+        container := input.review.object.spec.containers[_]
+        not container.resources.limits
+        msg := sprintf("Container '%v' must have resources.limits defined.", [container.name])
+      }
+      violation[{"msg": msg}] {
+        container := input.review.object.spec.containers[_]
+        container.resources.limits
+        not container.resources.limits.cpu
+        msg := sprintf("Container '%v' must have resources.limits.cpu defined.", [container.name])
+      }
+      violation[{"msg": msg}] {
+        container := input.review.object.spec.containers[_]
+        container.resources.limits
+        not container.resources.limits.memory
+        msg := sprintf("Container '%v' must have resources.limits.memory defined.", [container.name])
+      }
+
+---
+# F-04: Cấm runAsUser: 0 (chạy root)
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8snoroot
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sNoRoot
+  targets:
+  - target: admission.k8s.gatekeeper.sh
+    rego: |
+      package k8snoroot
+      violation[{"msg": msg}] {
+        input.review.object.spec.securityContext.runAsUser == 0
+        msg := "Pod must not run as root (runAsUser: 0)."
+      }
+      violation[{"msg": msg}] {
+        container := input.review.object.spec.containers[_]
+        container.securityContext.runAsUser == 0
+        msg := sprintf("Container '%v' must not run as root (runAsUser: 0).", [container.name])
+      }
+
+---
+# Cấm hostNetwork: true
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8snohostnetwork
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sNoHostNetwork
+  targets:
+  - target: admission.k8s.gatekeeper.sh
+    rego: |
+      package k8snohostnetwork
+      violation[{"msg": msg}] {
+        input.review.object.spec.hostNetwork == true
+        msg := "Pod must not use hostNetwork."
+      }
