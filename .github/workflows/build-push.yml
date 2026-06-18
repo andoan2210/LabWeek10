@@ -66,15 +66,19 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       # Lab 2.2a: Trivy scan — fail pipeline nếu có CVE HIGH hoặc CRITICAL
+      # Dùng binary trực tiếp thay vì trivy-action (tránh supply chain risk)
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.51.4
+
       - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@0.29.0
-        with:
-          image-ref: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.version }}"
-          format: table
-          exit-code: "1"
-          ignore-unfixed: false
-          vuln-type: os,library
-          severity: HIGH,CRITICAL
+        run: |
+          trivy image \
+            --exit-code 1 \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --vuln-type os,library \
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.version }}"
 
       # Push sau khi scan pass
       - name: Push Docker image
