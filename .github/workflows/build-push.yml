@@ -66,10 +66,13 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       # Lab 2.2a: Trivy scan — fail pipeline nếu có CVE HIGH hoặc CRITICAL
-      # Dùng binary trực tiếp thay vì trivy-action (tránh supply chain risk)
+      # Tải binary trực tiếp từ GitHub Releases (tránh dùng install script)
       - name: Install Trivy
         run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.51.4
+          wget -q https://github.com/aquasecurity/trivy/releases/download/v0.51.4/trivy_0.51.4_Linux-64bit.tar.gz
+          tar -xzf trivy_0.51.4_Linux-64bit.tar.gz
+          sudo mv trivy /usr/local/bin/trivy
+          trivy --version
 
       - name: Scan image with Trivy
         run: |
