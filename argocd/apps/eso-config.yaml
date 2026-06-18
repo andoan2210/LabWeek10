@@ -23,3 +23,12 @@ spec:
       selfHeal: true
     syncOptions:
     - ServerSideApply=true
+  # ESO controller tự inject fields vào ExternalSecret sau khi sync
+  # ignoreDifferences để ArgoCD không loop sync liên tục
+  ignoreDifferences:
+  - group: external-secrets.io
+    kind: ExternalSecret
+    jsonPointers:
+    - /spec/dataFrom
+    - /metadata/annotations
+    - /metadata/finalizers
